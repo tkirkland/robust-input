@@ -20,89 +20,89 @@ class InputStyle:
     """Comprehensive ANSI styling options for input prompts and text."""
 
     # === RESET ===
-    RESET = '\033[0m'
+    RESET = "\033[0m"
 
     # === TEXT ATTRIBUTES ===
-    BOLD = '\033[1m'
-    DIM = '\033[2m'
-    ITALIC = '\033[3m'
-    UNDERLINE = '\033[4m'
-    SLOW_BLINK = '\033[5m'
-    RAPID_BLINK = '\033[6m'
-    INVERTED = '\033[7m'
-    CONCEAL = '\033[8m'
-    STRIKETHROUGH = '\033[9m'
+    BOLD = "\033[1m"
+    DIM = "\033[2m"
+    ITALIC = "\033[3m"
+    UNDERLINE = "\033[4m"
+    SLOW_BLINK = "\033[5m"
+    RAPID_BLINK = "\033[6m"
+    INVERTED = "\033[7m"
+    CONCEAL = "\033[8m"
+    STRIKETHROUGH = "\033[9m"
 
     # === RESET SPECIFIC ATTRIBUTES ===
-    RESET_BOLD = '\033[22m'
-    RESET_DIM = '\033[22m'
-    RESET_ITALIC = '\033[23m'
-    RESET_UNDERLINE = '\033[24m'
-    RESET_BLINK = '\033[25m'
-    RESET_REVERSE = '\033[27m'
-    RESET_CONCEAL = '\033[28m'
-    RESET_STRIKETHROUGH = '\033[29m'
+    RESET_BOLD = "\033[22m"
+    RESET_DIM = "\033[22m"
+    RESET_ITALIC = "\033[23m"
+    RESET_UNDERLINE = "\033[24m"
+    RESET_BLINK = "\033[25m"
+    RESET_REVERSE = "\033[27m"
+    RESET_CONCEAL = "\033[28m"
+    RESET_STRIKETHROUGH = "\033[29m"
 
     # === STANDARD FOREGROUND COLORS (30-37) ===
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
-    DEFAULT_FG = '\033[39m'
+    BLACK = "\033[30m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    BLUE = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN = "\033[36m"
+    WHITE = "\033[37m"
+    DEFAULT_FG = "\033[39m"
 
     # === STANDARD BACKGROUND COLORS (40-47) ===
-    BG_BLACK = '\033[40m'
-    BG_RED = '\033[41m'
-    BG_GREEN = '\033[42m'
-    BG_YELLOW = '\033[43m'
-    BG_BLUE = '\033[44m'
-    BG_MAGENTA = '\033[45m'
-    BG_CYAN = '\033[46m'
-    BG_WHITE = '\033[47m'
-    DEFAULT_BG = '\033[49m'
+    BG_BLACK = "\033[40m"
+    BG_RED = "\033[41m"
+    BG_GREEN = "\033[42m"
+    BG_YELLOW = "\033[43m"
+    BG_BLUE = "\033[44m"
+    BG_MAGENTA = "\033[45m"
+    BG_CYAN = "\033[46m"
+    BG_WHITE = "\033[47m"
+    DEFAULT_BG = "\033[49m"
 
     # === BRIGHT FOREGROUND COLORS (90-97) ===
-    BRIGHT_BLACK = '\033[90m'
-    BRIGHT_RED = '\033[91m'
-    BRIGHT_GREEN = '\033[92m'
-    BRIGHT_YELLOW = '\033[93m'
-    BRIGHT_BLUE = '\033[94m'
-    BRIGHT_MAGENTA = '\033[95m'
-    BRIGHT_CYAN = '\033[96m'
-    BRIGHT_WHITE = '\033[97m'
+    BRIGHT_BLACK = "\033[90m"
+    BRIGHT_RED = "\033[91m"
+    BRIGHT_GREEN = "\033[92m"
+    BRIGHT_YELLOW = "\033[93m"
+    BRIGHT_BLUE = "\033[94m"
+    BRIGHT_MAGENTA = "\033[95m"
+    BRIGHT_CYAN = "\033[96m"
+    BRIGHT_WHITE = "\033[97m"
 
     # === BRIGHT BACKGROUND COLORS (100-107) ===
-    BG_BRIGHT_BLACK = '\033[100m'
-    BG_BRIGHT_RED = '\033[101m'
-    BG_BRIGHT_GREEN = '\033[102m'
-    BG_BRIGHT_YELLOW = '\033[103m'
-    BG_BRIGHT_BLUE = '\033[104m'
-    BG_BRIGHT_MAGENTA = '\033[105m'
-    BG_BRIGHT_CYAN = '\033[106m'
-    BG_BRIGHT_WHITE = '\033[107m'
+    BG_BRIGHT_BLACK = "\033[100m"
+    BG_BRIGHT_RED = "\033[101m"
+    BG_BRIGHT_GREEN = "\033[102m"
+    BG_BRIGHT_YELLOW = "\033[103m"
+    BG_BRIGHT_BLUE = "\033[104m"
+    BG_BRIGHT_MAGENTA = "\033[105m"
+    BG_BRIGHT_CYAN = "\033[106m"
+    BG_BRIGHT_WHITE = "\033[107m"
 
     # === LESS COMMON FONT STYLES ===
-    PRIMARY_FONT = '\033[10m'
-    ALT_FONT_1 = '\033[11m'
-    ALT_FONT_2 = '\033[12m'
-    ALT_FONT_3 = '\033[13m'
-    ALT_FONT_4 = '\033[14m'
-    ALT_FONT_5 = '\033[15m'
-    ALT_FONT_6 = '\033[16m'
-    ALT_FONT_7 = '\033[17m'
-    ALT_FONT_8 = '\033[18m'
-    ALT_FONT_9 = '\033[19m'
-    FRAKTUR = '\033[20m'
-    DOUBLE_UNDERLINE = '\033[21m'
-    FRAMED = '\033[51m'
-    ENCIRCLED = '\033[52m'
-    OVERLINED = '\033[53m'
-    NOT_FRAMED = '\033[54m'
-    NOT_OVERLINED = '\033[55m'
+    PRIMARY_FONT = "\033[10m"
+    ALT_FONT_1 = "\033[11m"
+    ALT_FONT_2 = "\033[12m"
+    ALT_FONT_3 = "\033[13m"
+    ALT_FONT_4 = "\033[14m"
+    ALT_FONT_5 = "\033[15m"
+    ALT_FONT_6 = "\033[16m"
+    ALT_FONT_7 = "\033[17m"
+    ALT_FONT_8 = "\033[18m"
+    ALT_FONT_9 = "\033[19m"
+    FRAKTUR = "\033[20m"
+    DOUBLE_UNDERLINE = "\033[21m"
+    FRAMED = "\033[51m"
+    ENCIRCLED = "\033[52m"
+    OVERLINED = "\033[53m"
+    NOT_FRAMED = "\033[54m"
+    NOT_OVERLINED = "\033[55m"
 
     @staticmethod
     def apply_style(text: str, *styles: str) -> str:
@@ -115,68 +115,69 @@ class InputStyle:
         Returns:
             The styled text.
         """
-        styled_text = ''.join(styles) + text + InputStyle.RESET
+        styled_text = "".join(styles) + text + InputStyle.RESET
         return styled_text
 
     @staticmethod
     def color_256(n: int) -> str:
         """Generate 256-color foreground color code.
-        
+
         Args:
             n: Color number (0-255)
-            
+
         Returns:
             ANSI escape sequence for 256-color foreground
         """
-        return f'\033[38;5;{n}m'
+        return f"\033[38;5;{n}m"
 
     @staticmethod
     def bg_color_256(n: int) -> str:
         """Generate 256-color background color code.
-        
+
         Args:
             n: Color number (0-255)
-            
+
         Returns:
             ANSI escape sequence for 256-color background
         """
-        return f'\033[48;5;{n}m'
+        return f"\033[48;5;{n}m"
 
     @staticmethod
     def rgb_color(r: int, g: int, b: int) -> str:
         """Generate RGB true color foreground code.
-        
+
         Args:
             r: Red component (0-255)
             g: Green component (0-255)
             b: Blue component (0-255)
-            
+
         Returns:
             ANSI escape sequence for RGB foreground color
         """
-        return f'\033[38;2;{r};{g};{b}m'
+        return f"\033[38;2;{r};{g};{b}m"
 
     @staticmethod
     def rgb_bg_color(r: int, g: int, b: int) -> str:
         """Generate RGB true color background code.
-        
+
         Args:
             r: Red component (0-255)
             g: Green component (0-255)
             b: Blue component (0-255)
-            
+
         Returns:
             ANSI escape sequence for RGB background color
         """
-        return f'\033[48;2;{r};{g};{b}m'
+        return f"\033[48;2;{r};{g};{b}m"
 
 
 class InputValidator:
     """Validator for input values based on various constraints."""
 
     @staticmethod
-    def validate_length(value: str, min_length: Optional[int] = None,
-                        max_length: Optional[int] = None) -> bool:
+    def validate_length(
+        value: str, min_length: Optional[int] = None, max_length: Optional[int] = None
+    ) -> bool:
         """Validate the length of the input string.
 
         Args:
@@ -210,8 +211,18 @@ class InputValidator:
         try:
             if target_type == bool:
                 # Special handling for boolean values
-                return value.lower() in ('true', 'false', 'yes', 'no', 't', 'f', 'y', 'n',
-                                         '1', '0')
+                return value.lower() in (
+                    "true",
+                    "false",
+                    "yes",
+                    "no",
+                    "t",
+                    "f",
+                    "y",
+                    "n",
+                    "1",
+                    "0",
+                )
             elif target_type == int:
                 int(value)
             elif target_type == float:
@@ -249,12 +260,12 @@ class InputValidator:
         Returns:
             True if the value is a valid IP address, False otherwise.
         """
-        pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+        pattern = r"^(\d{1,3}\.){3}\d{1,3}$"
         if not re.match(pattern, value):
             return False
 
         # Check each octet is in range 0-255
-        octets = value.split('.')
+        octets = value.split(".")
         for octet in octets:
             num = int(octet)
             if num < 0 or num > 255:
@@ -290,7 +301,7 @@ def cast_value(value: str, target_type: Type) -> Any:
         ValueError: If the value cannot be cast to the target type.
     """
     if target_type == bool:
-        return value.lower() in ('true', 'yes', 't', 'y', '1')
+        return value.lower() in ("true", "yes", "t", "y", "1")
     elif target_type == int:
         return int(value)
     elif target_type == float:
@@ -304,7 +315,7 @@ def cast_value(value: str, target_type: Type) -> Any:
 class InputHandler:
     """Handles terminal input with cursor movement and validation."""
 
-    def __init__(self, config: 'InputConfig'):
+    def __init__(self, config: "InputConfig"):
         self.config = config
         self.buffer = []
         self.cursor_pos = 0
@@ -357,6 +368,7 @@ class InputHandler:
         """Collect raw input based on configuration."""
         if self.config.is_password:
             import getpass
+
             return getpass.getpass(self.config.prompt + ": ")
         else:
             return input(self.config.styled_prompt)
@@ -375,14 +387,15 @@ class InputHandler:
     def _display_simple_error(self):
         """Display an error message below input and reposition cursor."""
         # Clear any existing error text on next line and display new error
-        sys.stdout.write('\033[K')  # Clear the current line first
+        sys.stdout.write("\033[K")  # Clear the current line first
         sys.stdout.write(
-            InputStyle.apply_style(self.config.error_message, *self.config.error_style))
-        sys.stdout.write('\n')
+            InputStyle.apply_style(self.config.error_message, *self.config.error_style)
+        )
+        sys.stdout.write("\n")
         sys.stdout.flush()
 
         # Move the cursor up to the input line and clear the input line only
-        sys.stdout.write('\033[A\033[K')  # Move up and clear the input line
+        sys.stdout.write("\033[A\033[K")  # Move up and clear the input line
         sys.stdout.flush()
 
     def _handle_simple_input_error(self, error: Exception) -> Any:
@@ -396,7 +409,8 @@ class InputHandler:
                     return cast_value(self.config.default, self.config.target_type)
                 else:
                     raise ValueError(
-                        f"Default value '{self.config.default}' failed validation")
+                        f"Default value '{self.config.default}' failed validation"
+                    )
             raise
         else:
             raise error
@@ -415,14 +429,14 @@ class InputHandler:
 
     def _process_enter(self) -> Optional[Any]:
         """Process the Enter key and validate input."""
-        current_input = ''.join(self.buffer)
+        current_input = "".join(self.buffer)
 
         if not current_input and self.config.default is not None:
             current_input = self.config.default
 
         if self._validate_input(current_input):
             # Clear any error text below before proceeding
-            sys.stdout.write('\n\033[K')  # Move to the next line and clear any error
+            sys.stdout.write("\n\033[K")  # Move to the next line and clear any error
             sys.stdout.flush()
             return cast_value(current_input, self.config.target_type)
         else:
@@ -435,15 +449,16 @@ class InputHandler:
             return False
 
         validators = [
-            lambda s: InputValidator.validate_length(s, self.config.min_length,
-                                                     self.config.max_length),
+            lambda s: InputValidator.validate_length(
+                s, self.config.min_length, self.config.max_length
+            ),
             lambda s: InputValidator.validate_type(s, self.config.target_type),
-            lambda s: self.config.pattern is None or InputValidator.validate_pattern(s,
-                                                                                     self.config.pattern),
-            lambda s: self.config.choices is None or InputValidator.validate_in_choices(s,
-                                                                                        self.config.choices),
-            lambda
-                s: self.config.custom_validator is None or self.config.custom_validator(s)
+            lambda s: self.config.pattern is None
+            or InputValidator.validate_pattern(s, self.config.pattern),
+            lambda s: self.config.choices is None
+            or InputValidator.validate_in_choices(s, self.config.choices),
+            lambda s: self.config.custom_validator is None
+            or self.config.custom_validator(s),
         ]
 
         return all(validator(input_str) for validator in validators)
@@ -451,16 +466,17 @@ class InputHandler:
     def _display_error_and_reset(self):
         """Display an error message below input and reposition cursor."""
         # Move to the next line and clear any existing error text
-        sys.stdout.write('\n\033[K')  # Move down and clear the line
+        sys.stdout.write("\n\033[K")  # Move down and clear the line
 
         # Display error message
         sys.stdout.write(
-            InputStyle.apply_style(self.config.error_message, *self.config.error_style))
+            InputStyle.apply_style(self.config.error_message, *self.config.error_style)
+        )
         sys.stdout.flush()
 
         # Move the cursor back up to input line and clear input line only
-        sys.stdout.write('\033[A')  # Move up one line
-        sys.stdout.write('\r\033[K')  # Clear input line
+        sys.stdout.write("\033[A")  # Move up one line
+        sys.stdout.write("\r\033[K")  # Clear input line
 
         # Redisplay the prompt at the same position
         sys.stdout.write(self.config.styled_prompt)
@@ -475,7 +491,7 @@ class InputHandler:
             self.buffer.pop(self.cursor_pos - 1)
             self.cursor_pos -= 1
 
-            sys.stdout.write('\b \b')
+            sys.stdout.write("\b \b")
 
             if self.cursor_pos < len(self.buffer):
                 self._redraw_from_cursor()
@@ -487,20 +503,22 @@ class InputHandler:
         next1 = sys.stdin.read(1)
         next2 = sys.stdin.read(1)
 
-        if next1 == '[':
-            if next2 == 'D' and self.cursor_pos > 0:  # Left arrow
+        if next1 == "[":
+            if next2 == "D" and self.cursor_pos > 0:  # Left arrow
                 self.cursor_pos -= 1
-                sys.stdout.write('\033[D')
+                sys.stdout.write("\033[D")
                 sys.stdout.flush()
-            elif next2 == 'C' and self.cursor_pos < len(self.buffer):  # Right arrow
+            elif next2 == "C" and self.cursor_pos < len(self.buffer):  # Right arrow
                 self.cursor_pos += 1
-                sys.stdout.write('\033[C')
+                sys.stdout.write("\033[C")
                 sys.stdout.flush()
 
     def _process_printable_char(self, char: str):
         """Process printable character input."""
-        if self.config.max_length is not None and len(
-                self.buffer) >= self.config.max_length:
+        if (
+            self.config.max_length is not None
+            and len(self.buffer) >= self.config.max_length
+        ):
             return
 
         self.buffer.insert(self.cursor_pos, char)
@@ -517,37 +535,46 @@ class InputHandler:
     def _display_char(self, char: str):
         """Display a single character with appropriate styling."""
         if self.config.is_password:
-            sys.stdout.write('*')
+            sys.stdout.write("*")
         else:
             sys.stdout.write(InputStyle.apply_style(char, *self.config.input_style))
 
     def _redraw_from_cursor(self):
         """Redraw buffer content from the cursor position."""
-        sys.stdout.write('\033[K')  # Clear line from the cursor
+        sys.stdout.write("\033[K")  # Clear line from the cursor
 
-        remaining_chars = ''.join(self.buffer[self.cursor_pos:])
+        remaining_chars = "".join(self.buffer[self.cursor_pos :])
         if self.config.is_password:
-            sys.stdout.write('*' * len(remaining_chars))
+            sys.stdout.write("*" * len(remaining_chars))
         else:
             sys.stdout.write(
-                InputStyle.apply_style(remaining_chars, *self.config.input_style))
+                InputStyle.apply_style(remaining_chars, *self.config.input_style)
+            )
 
         if remaining_chars:
-            sys.stdout.write(f'\033[{len(remaining_chars)}D')  # Move cursor back
+            sys.stdout.write(f"\033[{len(remaining_chars)}D")  # Move cursor back
 
 
 class InputConfig:
     """Configuration for input handling."""
 
-    def __init__(self, prompt: str, default: Optional[str] = None,
-                 min_length: Optional[int] = None, max_length: Optional[int] = None,
-                 allow_empty: bool = True, target_type: Type = str,
-                 pattern: Optional[str] = None, choices: Optional[List[str]] = None,
-                 is_password: bool = False, prompt_style: Optional[List[str]] = None,
-                 input_style: Optional[List[str]] = None,
-                 error_message: Optional[str] = None,
-                 error_style: Optional[List[str]] = None,
-                 custom_validator: Optional[Callable[[str], bool]] = None):
+    def __init__(
+        self,
+        prompt: str,
+        default: Optional[str] = None,
+        min_length: Optional[int] = None,
+        max_length: Optional[int] = None,
+        allow_empty: bool = True,
+        target_type: Type = str,
+        pattern: Optional[str] = None,
+        choices: Optional[List[str]] = None,
+        is_password: bool = False,
+        prompt_style: Optional[List[str]] = None,
+        input_style: Optional[List[str]] = None,
+        error_message: Optional[str] = None,
+        error_style: Optional[List[str]] = None,
+        custom_validator: Optional[Callable[[str], bool]] = None,
+    ):
         self.prompt = prompt
         self.default = default
         self.min_length = min_length
@@ -576,20 +603,20 @@ class InputConfig:
 
 
 def get_input(
-        prompt: str,
-        default: Optional[str] = None,
-        min_length: Optional[int] = None,
-        max_length: Optional[int] = None,
-        allow_empty: bool = True,
-        target_type: Type = str,
-        pattern: Optional[str] = None,
-        choices: Optional[List[str]] = None,
-        is_password: bool = False,
-        prompt_style: Optional[List[str]] = None,
-        input_style: Optional[List[str]] = None,
-        error_message: Optional[str] = None,
-        error_style: Optional[List[str]] = None,
-        custom_validator: Optional[Callable[[str], bool]] = None
+    prompt: str,
+    default: Optional[str] = None,
+    min_length: Optional[int] = None,
+    max_length: Optional[int] = None,
+    allow_empty: bool = True,
+    target_type: Type = str,
+    pattern: Optional[str] = None,
+    choices: Optional[List[str]] = None,
+    is_password: bool = False,
+    prompt_style: Optional[List[str]] = None,
+    input_style: Optional[List[str]] = None,
+    error_message: Optional[str] = None,
+    error_style: Optional[List[str]] = None,
+    custom_validator: Optional[Callable[[str], bool]] = None,
 ) -> Any:
     """Get user input with robust validation and formatting.
 
@@ -618,11 +645,20 @@ def get_input(
         The validated and cast input value.
     """
     config = InputConfig(
-        prompt=prompt, default=default, min_length=min_length, max_length=max_length,
-        allow_empty=allow_empty, target_type=target_type, pattern=pattern,
-        choices=choices, is_password=is_password, prompt_style=prompt_style,
-        input_style=input_style, error_message=error_message, error_style=error_style,
-        custom_validator=custom_validator
+        prompt=prompt,
+        default=default,
+        min_length=min_length,
+        max_length=max_length,
+        allow_empty=allow_empty,
+        target_type=target_type,
+        pattern=pattern,
+        choices=choices,
+        is_password=is_password,
+        prompt_style=prompt_style,
+        input_style=input_style,
+        error_message=error_message,
+        error_style=error_style,
+        custom_validator=custom_validator,
     )
 
     handler = InputHandler(config)
@@ -630,14 +666,14 @@ def get_input(
 
 
 def get_password(
-        prompt: str,
-        min_length: Optional[int] = None,
-        max_length: Optional[int] = None,
-        allow_empty: bool = False,
-        pattern: Optional[str] = None,
-        prompt_style: Optional[List[str]] = None,
-        error_message: Optional[str] = None,
-        custom_validator: Optional[Callable[[str], bool]] = None
+    prompt: str,
+    min_length: Optional[int] = None,
+    max_length: Optional[int] = None,
+    allow_empty: bool = False,
+    pattern: Optional[str] = None,
+    prompt_style: Optional[List[str]] = None,
+    error_message: Optional[str] = None,
+    custom_validator: Optional[Callable[[str], bool]] = None,
 ) -> str:
     """Get a password from the user with masking.
 
@@ -670,19 +706,19 @@ def get_password(
         is_password=True,
         prompt_style=prompt_style,
         error_message=error_message,
-        custom_validator=custom_validator
+        custom_validator=custom_validator,
     )
 
 
 def get_integer(
-        prompt: str,
-        default: Optional[int] = None,
-        min_value: Optional[int] = None,
-        max_value: Optional[int] = None,
-        allow_empty: bool = False,
-        prompt_style: Optional[List[str]] = None,
-        input_style: Optional[List[str]] = None,
-        error_message: Optional[str] = None
+    prompt: str,
+    default: Optional[int] = None,
+    min_value: Optional[int] = None,
+    max_value: Optional[int] = None,
+    allow_empty: bool = False,
+    prompt_style: Optional[List[str]] = None,
+    input_style: Optional[List[str]] = None,
+    error_message: Optional[str] = None,
 ) -> int:
     """Get an integer from the user.
 
@@ -733,18 +769,18 @@ def get_integer(
         prompt_style=prompt_style,
         input_style=input_style,
         error_message=error_message,
-        custom_validator=validate_range
+        custom_validator=validate_range,
     )
 
 
 def get_choice(
-        prompt: str,
-        choices: List[str],
-        default: Optional[str] = None,
-        allow_empty: bool = False,
-        prompt_style: Optional[List[str]] = None,
-        input_style: Optional[List[str]] = None,
-        error_message: Optional[str] = None
+    prompt: str,
+    choices: List[str],
+    default: Optional[str] = None,
+    allow_empty: bool = False,
+    prompt_style: Optional[List[str]] = None,
+    input_style: Optional[List[str]] = None,
+    error_message: Optional[str] = None,
 ) -> str:
     """Get a choice from a list of options.
 
@@ -773,17 +809,17 @@ def get_choice(
         choices=choices,
         prompt_style=prompt_style,
         input_style=input_style,
-        error_message=error_message
+        error_message=error_message,
     )
 
 
 def get_ip_address(
-        prompt: str,
-        default: Optional[str] = None,
-        allow_empty: bool = False,
-        prompt_style: Optional[List[str]] = None,
-        input_style: Optional[List[str]] = None,
-        error_message: Optional[str] = None
+    prompt: str,
+    default: Optional[str] = None,
+    allow_empty: bool = False,
+    prompt_style: Optional[List[str]] = None,
+    input_style: Optional[List[str]] = None,
+    error_message: Optional[str] = None,
 ) -> str:
     """Get a valid IP address from the user.
 
@@ -811,5 +847,5 @@ def get_ip_address(
         prompt_style=prompt_style,
         input_style=input_style,
         error_message=error_message,
-        custom_validator=InputValidator.validate_ip_address
+        custom_validator=InputValidator.validate_ip_address,
     )
