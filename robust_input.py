@@ -277,7 +277,7 @@ class InputValidator:
             try:
                 # Check cache size limit and clear oldest entries if needed
                 if len(InputValidator._pattern_cache) >= InputValidator._MAX_CACHE_SIZE:
-                    # Remove oldest entries (simple FIFO strategy)
+                    # Remove the oldest entries (simple FIFO strategy)
                     oldest_keys = list(InputValidator._pattern_cache.keys())[:10]
                     for key in oldest_keys:
                         del InputValidator._pattern_cache[key]
@@ -379,10 +379,10 @@ class InputHandler:
         self._validators = self._build_validator_chain()
 
     def _build_validator_chain(self):
-        """Build optimized validation chain without lambda overhead."""
+        """Build an optimized validation chain without lambda overhead."""
         validators = []
 
-        # Add length validator if needed
+        # Add a length validator if needed
         if self.config.min_length is not None or self.config.max_length is not None:
             validators.append(
                 ("length", self.config.min_length, self.config.max_length)
@@ -410,7 +410,7 @@ class InputHandler:
         # Check if we're in a proper terminal
         if not sys.stdin.isatty():
             # Fallback to simple input for non-terminal environments
-            # Use default max_attempts of 10 for non-terminal mode
+            # Uses default max_attempts of 10 for non-terminal mode
             return self._simple_input(max_attempts=10)
 
         self.old_settings = termios.tcgetattr(sys.stdin)
@@ -589,7 +589,7 @@ class InputHandler:
     def _validate_length_spec(
         input_str: str, min_len: Optional[int], max_len: Optional[int]
     ) -> bool:
-        """Validate length constraint for input string."""
+        """Validate length constraint for the input string."""
         return InputValidator.validate_length(input_str, min_len, max_len)
 
     def _display_error_and_reset(self):
@@ -630,7 +630,7 @@ class InputHandler:
     def _process_arrow_keys(self):
         """Process arrow key sequences with timeout protection."""
         try:
-            # Read escape sequence with timeout protection
+            # Read an escape sequence with timeout protection
             ready, _, _ = select.select([sys.stdin], [], [], SELECT_TIMEOUT)
             if not ready:
                 return
@@ -661,7 +661,7 @@ class InputHandler:
             pass
 
     def _move_to_start(self):
-        """Move cursor to the beginning of the input."""
+        """Move the cursor to the beginning of the input."""
         if self.cursor_pos > 0:
             # Move cursor to start of input
             sys.stdout.write(f"\033[{self.cursor_pos}D")
@@ -669,9 +669,9 @@ class InputHandler:
             sys.stdout.flush()
 
     def _move_to_end(self):
-        """Move cursor to the end of the input."""
+        """Move the cursor to the end of the input."""
         if self.cursor_pos < len(self.buffer):
-            # Move cursor to end of input
+            # Move the cursor to the end of the input
             moves_needed = len(self.buffer) - self.cursor_pos
             sys.stdout.write(f"\033[{moves_needed}C")
             self.cursor_pos = len(self.buffer)
@@ -697,25 +697,25 @@ class InputHandler:
             pass
 
     def _process_printable_char(self, char: str):
-        """Process printable character input with optimized redraw."""
+        """Process printable character input with optimized redrawing."""
         if (
             self.config.max_length is not None
             and len(self.buffer) >= self.config.max_length
         ):
             return
 
-        # Insert character into buffer
+        # Insert character into the buffer
         self.buffer.insert(self.cursor_pos, char)
 
-        # Check if we're inserting at the end (most common case)
+        # Check if we're inserting at the end (the most common case)
         is_append = self.cursor_pos == len(self.buffer) - 1
         self.cursor_pos += 1
 
         if is_append:
-            # Optimize for append - just display the character
+            # Optimize for appending - just display the character
             self._display_char(char)
         else:
-            # Insert in middle - need to redraw efficiently
+            # Insert in the middle-need to redraw efficiently
             self._display_char(char)
             self._redraw_from_cursor_optimized()
 
@@ -745,12 +745,12 @@ class InputHandler:
 
     def _redraw_from_cursor_optimized(self):
         """Optimized redraw that minimizes string operations."""
-        # Only redraw if there are characters after cursor
+        # Only redraw if there are characters after the cursor
         remaining_count = len(self.buffer) - self.cursor_pos
         if remaining_count <= 0:
             return
 
-        # Clear line from cursor and redraw remaining characters
+        # Clear line from the cursor and redraw remaining characters
         sys.stdout.write("\033[K")
 
         if self.config.is_password:
