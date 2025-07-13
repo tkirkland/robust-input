@@ -10,10 +10,19 @@ This module only uses the Python standard library and is intended for Linux usag
 """
 
 import re
+import select
 import sys
 import termios
 import tty
 from typing import Any, Callable, Optional, Type, List
+
+# Terminal control constants
+CTRL_C = 3
+ENTER = 13
+ESCAPE = 27
+BACKSPACE = 127
+PRINTABLE_ASCII_START = 32
+PRINTABLE_ASCII_END = 126
 
 
 class InputStyle:
@@ -115,8 +124,14 @@ class InputStyle:
         Returns:
             The styled text.
         """
-        styled_text = "".join(styles) + text + InputStyle.RESET
-        return styled_text
+        if not styles:
+            return text
+        
+        # Use list join for more efficient string building
+        parts = list(styles)
+        parts.append(text)
+        parts.append(InputStyle.RESET)
+        return "".join(parts)
 
     @staticmethod
     def color_256(n: int) -> str:
@@ -173,6 +188,9 @@ class InputStyle:
 
 class InputValidator:
     """Validator for input values based on various constraints."""
+    
+    # Cache for compiled regex patterns to improve performance
+    _pattern_cache = {}
 
     @staticmethod
     def validate_length(
@@ -205,22 +223,24 @@ class InputValidator:
         Returns:
             True if the value can be cast to the target type, False otherwise.
         """
-        if not value and target_type != str:
+        # Check for empty string specifically, not falsy values like "0"
+        if value == "" and target_type != str:
             return False
 
         try:
             if target_type == bool:
-                # Special handling for boolean values
+                # Special handling for boolean values - only validate truthy values
+                # since cast_value only accepts truthy values for consistency
                 return value.lower() in (
                     "true",
-                    "false",
                     "yes",
-                    "no",
                     "t",
-                    "f",
                     "y",
-                    "n",
                     "1",
+                    "false",
+                    "no",
+                    "f",
+                    "n",
                     "0",
                 )
             elif target_type == int:
@@ -248,7 +268,16 @@ class InputValidator:
         Returns:
             True if the value matches the pattern, False otherwise.
         """
-        return bool(re.match(pattern, value))
+        # Use cached compiled patterns for better performance
+        if pattern not in InputValidator._pattern_cache:
+            try:
+                InputValidator._pattern_cache[pattern] = re.compile(pattern)
+            except re.error:
+                # Invalid regex pattern
+                return False
+        
+        compiled_pattern = InputValidator._pattern_cache[pattern]
+        return bool(compiled_pattern.match(value))
 
     @staticmethod
     def validate_ip_address(value: str) -> bool:
@@ -264,11 +293,18 @@ class InputValidator:
         if not re.match(pattern, value):
             return False
 
-        # Check each octet is in range 0-255
+        # Check each octet is in range 0-255 and has no leading zeros
         octets = value.split(".")
         for octet in octets:
-            num = int(octet)
-            if num < 0 or num > 255:
+            # Reject leading zeros (except for "0" itself)
+            if len(octet) > 1 and octet[0] == '0':
+                return False
+            
+            try:
+                num = int(octet)
+                if num < 0 or num > 255:
+                    return False
+            except ValueError:
                 return False
 
         return True
@@ -301,7 +337,14 @@ def cast_value(value: str, target_type: Type) -> Any:
         ValueError: If the value cannot be cast to the target type.
     """
     if target_type == bool:
-        return value.lower() in ("true", "yes", "t", "y", "1")
+        # Match the same values accepted by validate_type for consistency
+        lower_val = value.lower()
+        if lower_val in ("true", "yes", "t", "y", "1"):
+            return True
+        elif lower_val in ("false", "no", "f", "n", "0"):
+            return False
+        else:
+            raise ValueError(f"Cannot convert '{value}' to boolean")
     elif target_type == int:
         return int(value)
     elif target_type == float:
@@ -320,6 +363,34 @@ class InputHandler:
         self.buffer = []
         self.cursor_pos = 0
         self.old_settings = None
+        
+        # Pre-compile validation chain for better performance
+        self._validators = self._build_validator_chain()
+    
+    def _build_validator_chain(self):
+        """Build optimized validation chain without lambda overhead."""
+        validators = []
+        
+        # Add length validator if needed
+        if self.config.min_length is not None or self.config.max_length is not None:
+            validators.append(('length', self.config.min_length, self.config.max_length))
+        
+        # Add type validator
+        validators.append(('type', self.config.target_type))
+        
+        # Add pattern validator if specified
+        if self.config.pattern is not None:
+            validators.append(('pattern', self.config.pattern))
+        
+        # Add choice validator if specified
+        if self.config.choices is not None:
+            validators.append(('choices', self.config.choices))
+        
+        # Add custom validator if specified
+        if self.config.custom_validator is not None:
+            validators.append(('custom', self.config.custom_validator))
+        
+        return validators
 
     def get_input(self) -> Any:
         """Main input loop with validation."""
@@ -335,18 +406,22 @@ class InputHandler:
 
             while True:
                 char = self._read_char()
+                
+                # Skip empty chars from timeout
+                if not char:
+                    continue
 
-                if ord(char) == 3:  # Ctrl+C
+                if ord(char) == CTRL_C:
                     raise KeyboardInterrupt
-                elif ord(char) == 13:  # Enter
+                elif ord(char) == ENTER:
                     result = self._process_enter()
                     if result is not None:
                         return result
-                elif ord(char) == 127:  # Backspace
+                elif ord(char) == BACKSPACE:
                     self._process_backspace()
-                elif ord(char) == 27:  # Escape (arrow keys)
+                elif ord(char) == ESCAPE:
                     self._process_arrow_keys()
-                elif 32 <= ord(char) <= 126:  # Printable ASCII
+                elif PRINTABLE_ASCII_START <= ord(char) <= PRINTABLE_ASCII_END:
                     self._process_printable_char(char)
 
         finally:
@@ -416,10 +491,19 @@ class InputHandler:
             raise error
 
     def _read_char(self) -> str:
-        """Read a single character in raw mode."""
-        tty.setraw(sys.stdin.fileno())
-        char = sys.stdin.read(1)
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.old_settings)
+        """Read a single character in raw mode with timeout protection."""
+        try:
+            tty.setraw(sys.stdin.fileno())
+            # Use select with timeout to prevent indefinite blocking
+            ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if ready:
+                char = sys.stdin.read(1)
+            else:
+                char = ''
+        finally:
+            if self.old_settings:
+                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.old_settings)
+        
         return char
 
     def _display_prompt(self):
@@ -444,24 +528,36 @@ class InputHandler:
             return None
 
     def _validate_input(self, input_str: str) -> bool:
-        """Validate input against all constraints."""
+        """Validate input against all constraints using pre-compiled validators."""
         if not self.config.allow_empty and not input_str:
             return False
 
-        validators = [
-            lambda s: InputValidator.validate_length(
-                s, self.config.min_length, self.config.max_length
-            ),
-            lambda s: InputValidator.validate_type(s, self.config.target_type),
-            lambda s: self.config.pattern is None
-            or InputValidator.validate_pattern(s, self.config.pattern),
-            lambda s: self.config.choices is None
-            or InputValidator.validate_in_choices(s, self.config.choices),
-            lambda s: self.config.custom_validator is None
-            or self.config.custom_validator(s),
-        ]
-
-        return all(validator(input_str) for validator in validators)
+        # Use pre-compiled validators for better performance
+        for validator_spec in self._validators:
+            validator_type = validator_spec[0]
+            
+            if validator_type == 'length':
+                min_len, max_len = validator_spec[1], validator_spec[2]
+                if not InputValidator.validate_length(input_str, min_len, max_len):
+                    return False
+            elif validator_type == 'type':
+                target_type = validator_spec[1]
+                if not InputValidator.validate_type(input_str, target_type):
+                    return False
+            elif validator_type == 'pattern':
+                pattern = validator_spec[1]
+                if not InputValidator.validate_pattern(input_str, pattern):
+                    return False
+            elif validator_type == 'choices':
+                choices = validator_spec[1]
+                if not InputValidator.validate_in_choices(input_str, choices):
+                    return False
+            elif validator_type == 'custom':
+                custom_validator = validator_spec[1]
+                if not custom_validator(input_str):
+                    return False
+        
+        return True
 
     def _display_error_and_reset(self):
         """Display an error message below input and reposition cursor."""
@@ -499,36 +595,96 @@ class InputHandler:
             sys.stdout.flush()
 
     def _process_arrow_keys(self):
-        """Process arrow key sequences."""
-        next1 = sys.stdin.read(1)
-        next2 = sys.stdin.read(1)
+        """Process arrow key sequences with timeout protection."""
+        try:
+            # Read escape sequence with timeout protection
+            ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if not ready:
+                return
+            next1 = sys.stdin.read(1)
+            
+            ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if not ready:
+                return
+            next2 = sys.stdin.read(1)
 
-        if next1 == "[":
-            if next2 == "D" and self.cursor_pos > 0:  # Left arrow
-                self.cursor_pos -= 1
-                sys.stdout.write("\033[D")
-                sys.stdout.flush()
-            elif next2 == "C" and self.cursor_pos < len(self.buffer):  # Right arrow
-                self.cursor_pos += 1
-                sys.stdout.write("\033[C")
-                sys.stdout.flush()
+            if next1 == "[":
+                if next2 == "D" and self.cursor_pos > 0:  # Left arrow
+                    self.cursor_pos -= 1
+                    sys.stdout.write("\033[D")
+                    sys.stdout.flush()
+                elif next2 == "C" and self.cursor_pos < len(self.buffer):  # Right arrow
+                    self.cursor_pos += 1
+                    sys.stdout.write("\033[C")
+                    sys.stdout.flush()
+                elif next2 == "H":  # Home key
+                    self._move_to_start()
+                elif next2 == "F":  # End key
+                    self._move_to_end()
+                elif next2.isdigit():  # Handle multi-character sequences like 1~ or 4~
+                    self._handle_extended_keys(next2)
+        except (OSError, IOError):
+            # Ignore malformed escape sequences
+            pass
+    
+    def _move_to_start(self):
+        """Move cursor to the beginning of the input."""
+        if self.cursor_pos > 0:
+            # Move cursor to start of input
+            sys.stdout.write(f"\033[{self.cursor_pos}D")
+            self.cursor_pos = 0
+            sys.stdout.flush()
+    
+    def _move_to_end(self):
+        """Move cursor to the end of the input."""
+        if self.cursor_pos < len(self.buffer):
+            # Move cursor to end of input
+            moves_needed = len(self.buffer) - self.cursor_pos
+            sys.stdout.write(f"\033[{moves_needed}C")
+            self.cursor_pos = len(self.buffer)
+            sys.stdout.flush()
+    
+    def _handle_extended_keys(self, digit: str):
+        """Handle extended key sequences like 1~ (Home) and 4~ (End)."""
+        try:
+            # Read the final character of the sequence
+            ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if not ready:
+                return
+            final_char = sys.stdin.read(1)
+            
+            if final_char == "~":
+                if digit == "1":  # Home key (\033[1~)
+                    self._move_to_start()
+                elif digit == "4":  # End key (\033[4~)
+                    self._move_to_end()
+                # Other extended keys like 2~ (Insert), 3~ (Delete), etc. can be added here
+        except (OSError, IOError):
+            # Ignore malformed sequences
+            pass
 
     def _process_printable_char(self, char: str):
-        """Process printable character input."""
+        """Process printable character input with optimized redraw."""
         if (
             self.config.max_length is not None
             and len(self.buffer) >= self.config.max_length
         ):
             return
 
+        # Insert character into buffer
         self.buffer.insert(self.cursor_pos, char)
+        
+        # Check if we're inserting at the end (most common case)
+        is_append = self.cursor_pos == len(self.buffer) - 1
         self.cursor_pos += 1
 
-        if self.cursor_pos == len(self.buffer):
+        if is_append:
+            # Optimize for append - just display the character
             self._display_char(char)
         else:
+            # Insert in middle - need to redraw efficiently
             self._display_char(char)
-            self._redraw_from_cursor()
+            self._redraw_from_cursor_optimized()
 
         sys.stdout.flush()
 
@@ -553,6 +709,35 @@ class InputHandler:
 
         if remaining_chars:
             sys.stdout.write(f"\033[{len(remaining_chars)}D")  # Move cursor back
+    
+    def _redraw_from_cursor_optimized(self):
+        """Optimized redraw that minimizes string operations."""
+        # Only redraw if there are characters after cursor
+        remaining_count = len(self.buffer) - self.cursor_pos
+        if remaining_count <= 0:
+            return
+            
+        # Clear line from cursor and redraw remaining characters
+        sys.stdout.write("\033[K")
+        
+        if self.config.is_password:
+            # For passwords, just write asterisks - no styling needed
+            sys.stdout.write("*" * remaining_count)
+        else:
+            # Build styled output more efficiently
+            if self.config.input_style:
+                style_prefix = "".join(self.config.input_style)
+                # Write each character with minimal styling overhead
+                for i in range(self.cursor_pos, len(self.buffer)):
+                    sys.stdout.write(style_prefix + self.buffer[i] + InputStyle.RESET)
+            else:
+                # No styling - direct write
+                for char in self.buffer[self.cursor_pos:]:
+                    sys.stdout.write(char)
+        
+        # Move cursor back to correct position
+        if remaining_count > 0:
+            sys.stdout.write(f"\033[{remaining_count}D")
 
 
 class InputConfig:
@@ -590,6 +775,9 @@ class InputConfig:
         self.prompt_style = prompt_style or [InputStyle.GREEN]
         self.input_style = input_style or [InputStyle.CYAN]
         self.error_style = error_style or [InputStyle.RED]
+        
+        # Validate configuration parameters after styles are set
+        self._validate_config()
 
         # Set default error message
         self.error_message = error_message or "Invalid input. Please try again."
@@ -600,6 +788,50 @@ class InputConfig:
             display_prompt += f" [{default}]"
         display_prompt += ": "
         self.styled_prompt = InputStyle.apply_style(display_prompt, *self.prompt_style)
+    
+    def _validate_config(self):
+        """Validate configuration parameters for consistency and safety."""
+        # Validate length constraints
+        if self.min_length is not None and self.min_length < 0:
+            raise ValueError("min_length cannot be negative")
+        if self.max_length is not None and self.max_length < 0:
+            raise ValueError("max_length cannot be negative")
+        if (self.min_length is not None and self.max_length is not None 
+            and self.min_length > self.max_length):
+            raise ValueError("min_length cannot be greater than max_length")
+        
+        # Validate choices list
+        if self.choices is not None:
+            if not isinstance(self.choices, list) or len(self.choices) == 0:
+                raise ValueError("choices must be a non-empty list")
+            if not all(isinstance(choice, str) for choice in self.choices):
+                raise ValueError("all choices must be strings")
+        
+        # Validate regex pattern
+        if self.pattern is not None:
+            try:
+                re.compile(self.pattern)
+            except re.error as e:
+                raise ValueError(f"Invalid regex pattern: {e}")
+        
+        # Validate target type
+        if not isinstance(self.target_type, type):
+            raise ValueError("target_type must be a valid type")
+        
+        # Validate prompt
+        if not self.prompt or not isinstance(self.prompt, str):
+            raise ValueError("prompt must be a non-empty string")
+        
+        # Validate custom validator
+        if self.custom_validator is not None and not callable(self.custom_validator):
+            raise ValueError("custom_validator must be callable")
+        
+        # Validate style lists
+        for style_name, style_list in [('prompt_style', self.prompt_style), 
+                                       ('input_style', self.input_style),
+                                       ('error_style', self.error_style)]:
+            if style_list and not all(isinstance(s, str) for s in style_list):
+                raise ValueError(f"{style_name} must contain only strings")
 
 
 def get_input(

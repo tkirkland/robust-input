@@ -180,3 +180,5 @@ desktop.ini
 *.backup
 .claude/
 CLAUDE.md
+*test*
+*demo*

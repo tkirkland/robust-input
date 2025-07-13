@@ -329,71 +329,50 @@ The module uses a clean architecture with separated concerns:
 - **Non-terminal mode**: Graceful fallback using standard `input()`
 - **Automatic detection**: Seamlessly switches between modes
 
-## Complete Example
+## Complete Examples
+
+See the [examples/](examples/) directory for comprehensive usage demonstrations.
+
+### Quick Example
 
 ```python
 #!/usr/bin/env python3
-"""Complete example demonstrating robust_input features."""
+"""Quick example demonstrating robust_input features."""
 
 import robust_input as ri
 
 def main():
-    print("🎯 User Registration System")
-    print("=" * 40)
-    
-    # User information
+    # Basic input with validation
     name = ri.get_input(
-        prompt="👤 Full Name",
+        prompt="Enter your name",
         min_length=2,
         max_length=50,
-        allow_empty=False,
-        prompt_style=[ri.InputStyle.BLUE, ri.InputStyle.BOLD],
-        error_message="❌ Name must be 2-50 characters"
+        error_message="Name must be 2-50 characters"
     )
     
-    email = ri.get_input(
-        prompt="📧 Email Address",
-        pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-        prompt_style=[ri.InputStyle.BLUE, ri.InputStyle.BOLD],
-        error_message="❌ Please enter a valid email address"
-    )
-    
+    # Integer input with range validation
     age = ri.get_integer(
-        prompt="🎂 Age",
+        prompt="Enter your age",
         min_value=13,
         max_value=120,
-        prompt_style=[ri.InputStyle.BLUE, ri.InputStyle.BOLD],
-        error_message="❌ Age must be between 13 and 120"
+        error_message="Age must be between 13 and 120"
     )
     
-    password = ri.get_password(
-        prompt="🔒 Password",
-        min_length=8,
-        pattern=r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$',
-        error_message="❌ Password must be 8+ chars with letters and numbers"
-    )
-    
-    # Preferences
+    # Choice selection with styling
     theme = ri.get_choice(
-        prompt="🎨 Theme Preference",
+        prompt="Choose theme",
         choices=["light", "dark", "auto"],
         default="auto",
-        prompt_style=[ri.InputStyle.BLUE, ri.InputStyle.BOLD]
+        prompt_style=[ri.InputStyle.CYAN, ri.InputStyle.BOLD]
     )
     
-    # Summary
-    print("\n✅ Registration Complete!")
-    print(f"Name: {name}")
-    print(f"Email: {email}")
-    print(f"Age: {age}")
-    print(f"Theme: {theme}")
-    print(f"Password: {'*' * len(password)}")
+    print(f"\nHello {name} (age {age}), using {theme} theme!")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n👋 Registration cancelled.")
+        print("\nGoodbye!")
 ```
 
 ## Development
@@ -410,6 +389,74 @@ if __name__ == "__main__":
 - Clean error handling
 - Proper resource management
 - Cross-platform compatibility
+
+## Documentation
+
+For comprehensive documentation, see the [`docs/`](docs/) directory:
+
+- **[API Reference](docs/api-reference.md)** - Complete function and class documentation
+- **[Developer Guide](docs/developer-guide.md)** - Development setup and contribution guide  
+- **[Architecture](docs/architecture.md)** - System design and implementation details
+- **[Testing](docs/testing.md)** - Testing strategy and coverage analysis
+- **[Examples](examples/)** - Real-world usage examples
+
+## Testing
+
+The library includes a comprehensive test suite with 69% coverage:
+
+```bash
+# Run tests
+make test
+
+# Generate coverage report  
+make coverage
+
+# Run tests with verbose output
+make test-verbose
+```
+
+**Test Coverage Summary:**
+- 53 tests across all components
+- Unit, integration, and mock testing strategies
+- Comprehensive validation and error handling tests
+- CI/CD integration with GitHub Actions
+
+## Development
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd robust_input
+
+# Setup environment
+python -m venv venv
+source venv/bin/activate
+pip install coverage black isort flake8
+
+# Verify setup
+make validate
+make test
+```
+
+### Development Commands
+
+- `make test` - Run all tests
+- `make coverage` - Generate coverage report
+- `make lint` - Check code quality
+- `make format` - Auto-format code  
+- `make clean` - Clean generated files
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes with tests
+4. Ensure all tests pass (`make test`)
+5. Submit a pull request
+
+See [Developer Guide](docs/developer-guide.md) for detailed contribution guidelines.
 
 ## License
 
