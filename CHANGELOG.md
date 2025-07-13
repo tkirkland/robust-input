@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-01-13
+
 ### Added
+- **Production Stability**: First stable release with comprehensive improvements
+- **Cache Size Management**: Added bounded regex pattern cache with FIFO eviction (100 patterns max)
+- **Timeout Constants**: Centralized SELECT_TIMEOUT constant for maintainable timing configuration
+- **Infinite Loop Protection**: Added max_attempts parameter to prevent endless validation loops
 - Comprehensive documentation suite (API reference, developer guide, architecture)
 - Complete test suite with 69% coverage (53 tests)
 - GitHub Actions CI/CD pipeline
@@ -15,7 +21,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Example applications in `examples/` directory
 
 ### Changed
+- **Memory Safety**: Pattern cache now has bounded size to prevent memory exhaustion attacks
+- **Code Quality**: Eliminated magic numbers by extracting timeout constants
+- **Robustness**: Non-terminal environments now have 10-attempt validation limit by default
+- **Development Status**: Promoted to Production/Stable classification
 - README updated with enhanced examples and better organization
+
+### Fixed
+- **Memory DoS Prevention**: Regex pattern cache can no longer grow unbounded
+- **Infinite Validation Loops**: Added escape hatch for pathological validation scenarios
+- **Code Maintainability**: Centralized timeout values for easier configuration
+
+### Security
+- **DoS Resistance**: Enhanced protection against both memory and CPU exhaustion attacks
+- **Bounded Behavior**: All operations now have predictable resource usage limits
 
 ## [0.9.0] - 2024-12-XX
 
