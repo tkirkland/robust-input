@@ -1,0 +1,102 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install coverage
+        
+    - name: Run unit tests
+      run: |
+        python -m unittest test_robust_input -v
+        
+    - name: Generate coverage report
+      run: |
+        python -m coverage run test_robust_input.py
+        python -m coverage report robust_input.py
+        python -m coverage html robust_input.py
+        
+    - name: Upload coverage to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-${{ matrix.python-version }}
+        path: htmlcov/
+        
+    - name: Test module compilation
+      run: |
+        python -c "import robust_input; print('✅ Module imports successfully')"
+        python -m py_compile robust_input.py
+        
+    - name: Test basic functionality
+      run: |
+        python -c "
+        import robust_input as ri
+        import sys
+        from unittest.mock import patch
+        
+        # Test basic functionality in non-terminal mode
+        with patch('sys.stdin.isatty', return_value=False):
+            with patch('builtins.input', return_value='test'):
+                result = ri.get_input('Test prompt')
+                assert result == 'test'
+                print('✅ Basic input functionality works')
+                
+            with patch('builtins.input', return_value='42'):
+                result = ri.get_integer('Enter number')
+                assert result == 42
+                print('✅ Integer input functionality works')
+                
+            with patch('builtins.input', return_value='192.168.1.1'):
+                result = ri.get_ip_address('Enter IP')
+                assert result == '192.168.1.1'
+                print('✅ IP address validation works')
+        
+        print('🎉 All smoke tests passed!')
+        "
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black isort flake8
+        
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff robust_input.py test_robust_input.py
+        
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only --diff robust_input.py test_robust_input.py
+        
+    - name: Lint with flake8
+      run: |
+        flake8 robust_input.py test_robust_input.py --max-line-length=88 --extend-ignore=E203,W503
