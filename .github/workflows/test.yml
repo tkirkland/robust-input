@@ -28,7 +28,7 @@ jobs:
         
     - name: Run unit tests
       run: |
-        python -m unittest test_robust_input -v
+        python -m unittest discover -s . -p "test*.py" -v
         
     - name: Generate coverage report
       run: |
