@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [
-    { name = "Your Name", email = "your.email@example.com" },
+    { name = "tkirkland", email = "tkirkland@users.noreply.github.com" },
 ]
 keywords = ["input", "terminal", "validation", "cli", "command-line"]
 classifiers = [
