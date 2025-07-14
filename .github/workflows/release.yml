@@ -45,7 +45,7 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || github.event_name == 'push'
 
     steps:
     - uses: actions/checkout@v4
@@ -86,8 +86,3 @@ jobs:
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        # For first-time publish, use API token:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
-        # After first publish, remove the above lines and OIDC will work automatically
